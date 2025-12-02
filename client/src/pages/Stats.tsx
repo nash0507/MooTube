@@ -73,13 +73,13 @@ export default function Stats() {
       const { geminiApiKey } = getStorageData();
       if (!geminiApiKey) return;
 
-      // 🔍 除錯訊息：更新為明確版本號
-      console.log("正在嘗試使用模型: gemini-1.5-flash-001");
+      // 🔍 除錯訊息：嘗試使用 Pro 版本
+      console.log("正在嘗試使用模型: gemini-1.5-pro");
 
       const genAI = new GoogleGenerativeAI(geminiApiKey);
       
-      // 👇 修改：使用具體版本號 "gemini-1.5-flash-001" 避免別名解析錯誤
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+      // 👇 修改：切換至 "gemini-1.5-pro" 試試看
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
       const recentEntries = getLast7DaysData().map(e => ({
         date: e.dateString,

@@ -1,0 +1,78 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: hsl(250 50% 98%);
+  --color-foreground: hsl(260 20% 20%);
+  
+  --color-primary: hsl(265 80% 60%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  
+  --color-card: hsl(0 0% 100% / 0.7);
+  --color-card-foreground: hsl(260 20% 20%);
+  
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(260 20% 20%);
+  
+  --color-secondary: hsl(260 20% 96%);
+  --color-secondary-foreground: hsl(260 20% 20%);
+  
+  --color-muted: hsl(260 10% 94%);
+  --color-muted-foreground: hsl(260 10% 50%);
+  
+  --color-accent: hsl(265 80% 96%);
+  --color-accent-foreground: hsl(265 80% 50%);
+  
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+  
+  --color-border: hsl(260 20% 90%);
+  --color-input: hsl(260 20% 90%);
+  --color-ring: hsl(265 80% 60%);
+  
+  --radius: 1rem;
+  
+  --font-sans: 'Noto Sans TC', 'Quicksand', sans-serif;
+  --font-display: 'Quicksand', 'Noto Sans TC', sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 min-h-screen text-foreground selection:bg-primary/20;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-xl;
+  }
+  
+  .glass-card {
+    @apply bg-white/60 backdrop-blur-sm border border-white/30 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
+  .glass-input {
+    @apply bg-white/50 border-white/50 focus:bg-white/80 transition-colors;
+  }
+  
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+}

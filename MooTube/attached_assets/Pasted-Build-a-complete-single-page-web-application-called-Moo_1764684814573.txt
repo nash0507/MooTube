@@ -1,0 +1,65 @@
+Build a complete, single-page web application called "MoodFlow" (情緒氣象台).
+The app is a mood tracker with an AI-powered therapist feature.
+
+**Global Settings:**
+- **Framework:** React + Vite.
+- **Styling:** Tailwind CSS.
+- **Animations:** Framer Motion (for page transitions and button clicks).
+- **Icons:** Lucide React.
+- **Charts:** Recharts.
+- **AI SDK:** `@google/generative-ai`.
+- **Language:** All UI text must be in **Traditional Chinese (繁體中文)**.
+- **Data Persistence:** Use `localStorage` to save all mood entries and the user's API key. No backend is required.
+
+**Design Aesthetic (The Vibe):**
+- **Theme:** "Soft Pastel" & "Glassmorphism". Use a soft gradient background (e.g., bg-gradient-to-br from-indigo-100 to-purple-100).
+- **Layout:** Mobile-first design. On desktop, center the app in a phone-sized container (max-w-md) with a shadow-xl.
+- **UI Elements:** Rounded corners (rounded-2xl), translucent white cards (bg-white/80 backdrop-blur), and soft shadows.
+
+**Data Structure (in localStorage):**
+- `moodEntries`: Array of objects `{ id, timestamp, dateString, mood, note }`.
+- `geminiApiKey`: String.
+
+**Page Requirements & Navigation:**
+Create a bottom navigation bar to switch between these 4 views:
+
+### 1. Check-in (首頁)
+- **Header:** "今天感覺如何？"
+- **Mood Selector:** 5 large Emojis: 😄 (Happy), 😐 (Neutral), 😞 (Sad), 😡 (Angry), 😰 (Anxious).
+  - *Interaction:* When selected, the emoji should scale up (bounce animation).
+- **Text Input:** A textarea with placeholder "寫下一句簡短的想法...".
+- **Action:** A big "記錄心情" (Save) button.
+  - On click: Save data to localStorage, clear inputs, show a success toast/animation, and switch to the History tab.
+
+### 2. History (日記)
+- **Header:** "心情軌跡"
+- **List:** Display all entries sorted by Date (Newest first).
+- **Item Design:** Each card should show the Mood Emoji, the Date, and the Note.
+- **Empty State:** If no data, show "還沒有紀錄，快去新增第一筆吧！".
+
+### 3. Stats (分析)
+- **Header:** "情緒統計"
+- **Chart:** Use a Pie Chart (Recharts) to show the distribution of moods from the last 7 days.
+  - Colors: Happy (Yellow), Neutral (Gray), Sad (Blue), Angry (Red), Anxious (Purple).
+- **Streak:** Display "連續紀錄天數".
+- **AI Analysis Section (The Core Feature):**
+  - **Button:** "獲得 AI 建議" (Get AI Insights).
+  - **Logic:**
+    1. Check if `geminiApiKey` exists in localStorage. If not, show a link to the Settings page.
+    2. If Key exists, fetch the last 7 days of entries.
+    3. Construct a prompt: "Based on these mood entries: [JSON], act as a warm, empathetic friend. Give a summary of my mental state and 1 actionable self-care tip in Traditional Chinese. Keep it under 100 words."
+    4. Call `model.generateContent` using the Gemini API.
+    5. Show the result in a special "Magic Card" with a typing effect.
+
+### 4. Settings (設定)
+- **Header:** "系統設定"
+- **Input:** "Google Gemini API Key" input field (password type).
+- **Description:** Add a small text explaining: "請輸入您的 Gemini API Key 以啟用 AI 分析功能。Key 只會儲存在您的瀏覽器中。"
+- **Action:** Save button.
+
+**Implementation Steps:**
+1. Setup the project structure.
+2. Create the `useLocalStorage` hook.
+3. Build the Components (Navbar, MoodCard, Charts).
+4. Implement the Gemini API call logic securely.
+5. Apply the specific CSS styling for the "Glassmorphism" look.

@@ -73,9 +73,12 @@ export default function Stats() {
       const { geminiApiKey } = getStorageData();
       if (!geminiApiKey) return;
 
+      // 🔍 除錯訊息：如果你在 Console 沒看到這行，代表你在用舊版！
+      console.log("正在嘗試使用模型: gemini-1.5-flash");
+
       const genAI = new GoogleGenerativeAI(geminiApiKey);
       
-      // 👇 修改重點：將 "gemini-pro" 改為 "gemini-1.5-flash"
+      // 👇 確保這裡是 "gemini-1.5-flash"
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const recentEntries = getLast7DaysData().map(e => ({

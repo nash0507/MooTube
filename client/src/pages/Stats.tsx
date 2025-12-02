@@ -74,7 +74,7 @@ export default function Stats() {
     if (!geminiApiKey) return;
 
     try {
-      // 1. 先獲取所有可用模型，不再盲猜
+      // 1. 先獲取所有可用模型
       console.log("正在向 Google 查詢您的 API Key 可用模型...");
       const listResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${geminiApiKey}`);
       const listData = await listResponse.json();
@@ -93,26 +93,23 @@ export default function Stats() {
         throw new Error("找不到任何支援文字生成的 Gemini 模型");
       }
 
-      // 3. 智慧排序：Flash 1.5 > Pro 1.5 > 其他
+      // 3. 智慧排序：優先使用穩定版 (Flash/Pro)，將實驗版 (exp/preview) 排在後面
       validModels.sort((a: any, b: any) => {
         const aName = a.name.toLowerCase();
         const bName = b.name.toLowerCase();
-        // 優先找 1.5 flash
-        if (aName.includes("1.5-flash") && !bName.includes("1.5-flash")) return -1;
-        if (!aName.includes("1.5-flash") && bName.includes("1.5-flash")) return 1;
-        // 其次找 1.5 pro
-        if (aName.includes("1.5-pro") && !bName.includes("1.5-pro")) return -1;
-        if (!aName.includes("1.5-pro") && bName.includes("1.5-pro")) return 1;
-        return 0;
+        
+        const getScore = (name: string) => {
+          if (name.includes("gemini-1.5-flash")) return 100; // 最高優先級 (通常最便宜且額度高)
+          if (name.includes("gemini-1.5-pro")) return 90;    // 次高
+          if (name.includes("gemini-pro")) return 80;        // 舊版穩定
+          if (name.includes("preview") || name.includes("exp")) return 10; // 實驗版放最後 (避免 429)
+          return 50; // 其他
+        };
+
+        return getScore(bName) - getScore(aName);
       });
 
-      // API 回傳的名字通常是 "models/gemini-1.5-flash-001"，我們直接用這個
-      const bestModelName = validModels[0].name.replace("models/", "");
-      console.log(`✅ 自動選擇最佳模型: ${bestModelName}`);
-
-      // 4. 初始化並呼叫
-      const genAI = new GoogleGenerativeAI(geminiApiKey);
-      const model = genAI.getGenerativeModel({ model: bestModelName });
+      console.log("模型嘗試順序:", validModels.map((m: any) => m.name));
 
       const recentEntries = getLast7DaysData().map(e => ({
         date: e.dateString,
@@ -122,14 +119,40 @@ export default function Stats() {
       
       const prompt = `Based on these mood entries: ${JSON.stringify(recentEntries)}, act as a warm, empathetic friend. Give a summary of my mental state and 1 actionable self-care tip in Traditional Chinese (繁體中文). Keep it under 100 words. Be gentle and supportive.`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      setInsight(text);
+      let finalResponseText = null;
+      let lastError = null;
+
+      // 4. 【關鍵修改】輪詢機制：一個接一個試，直到成功
+      for (const modelInfo of validModels) {
+        const currentModelName = modelInfo.name.replace("models/", "");
+        try {
+          console.log(`🔄 嘗試使用模型: ${currentModelName}...`);
+          
+          const genAI = new GoogleGenerativeAI(geminiApiKey);
+          const model = genAI.getGenerativeModel({ model: currentModelName });
+          
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          finalResponseText = response.text();
+          
+          console.log(`✅ 成功! 最終使用模型: ${currentModelName}`);
+          break; // 成功就跳出迴圈
+        } catch (err: any) {
+          console.warn(`❌ 模型 ${currentModelName} 失敗: ${err.message}`);
+          lastError = err;
+          // 繼續嘗試下一個模型
+        }
+      }
+
+      if (finalResponseText) {
+        setInsight(finalResponseText);
+      } else {
+        throw lastError || new Error("所有可用模型皆無法連線 (429/404)");
+      }
 
     } catch (error: any) {
-      console.error("Gemini Error:", error);
-      setInsight(`抱歉，AI 連線發生錯誤: ${error.message || "未知錯誤"}`);
+      console.error("Gemini Critical Error:", error);
+      setInsight(`抱歉，AI 連線發生錯誤: ${error.message || "未知錯誤"}。請稍後再試。`);
     } finally {
       setLoading(false);
     }
@@ -216,7 +239,7 @@ export default function Stats() {
             {loading && (
                <Button disabled className="w-full h-12 rounded-xl bg-primary/50 text-white">
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                正在自動尋找最佳模型...
+                正在為您尋找可用的 AI 模型...
               </Button>
             )}
 

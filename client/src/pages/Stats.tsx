@@ -68,30 +68,69 @@ export default function Stats() {
 
   const getAIInsight = async () => {
     setLoading(true);
-    setInsight(null); // Reset previous insight
+    setInsight(null);
+    
+    const { geminiApiKey } = getStorageData();
+    if (!geminiApiKey) return;
+
+    // 定義我們要嘗試的模型清單 (優先順序)
+    const MODELS_TO_TRY = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"];
+    
     try {
-      const { geminiApiKey } = getStorageData();
-      if (!geminiApiKey) return;
-
-      console.log("Using model: gemini-1.5-pro");
-      const genAI = new GoogleGenerativeAI(geminiApiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-
       const recentEntries = getLast7DaysData().map(e => ({
         date: e.dateString,
         mood: e.mood,
         note: e.note
       }));
-
+      
       const prompt = `Based on these mood entries: ${JSON.stringify(recentEntries)}, act as a warm, empathetic friend. Give a summary of my mental state and 1 actionable self-care tip in Traditional Chinese (繁體中文). Keep it under 100 words. Be gentle and supportive.`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      setInsight(text);
-    } catch (error) {
-      console.error("Gemini Error:", error);
-      setInsight("抱歉，AI 目前有點累，請稍後再試。 (請確認 API Key 是否正確)");
+      let successText = null;
+      let lastError = null;
+
+      // 🔄 自動輪詢機制：一個一個試，直到成功
+      for (const modelName of MODELS_TO_TRY) {
+        try {
+          console.log(`正在嘗試連接模型: ${modelName}...`);
+          const genAI = new GoogleGenerativeAI(geminiApiKey);
+          const model = genAI.getGenerativeModel({ model: modelName });
+          
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          successText = response.text();
+          
+          console.log(`✅ 成功連接模型: ${modelName}`);
+          break; // 成功了就跳出迴圈
+        } catch (err: any) {
+          console.warn(`❌ 模型 ${modelName} 失敗:`, err.message);
+          lastError = err;
+          // 如果是 404 (找不到模型)，就繼續試下一個；如果是其他錯誤(如配額不足)，可能也要試下一個
+        }
+      }
+
+      if (successText) {
+        setInsight(successText);
+      } else {
+        // 如果全部都失敗，拋出最後一個錯誤
+        throw lastError;
+      }
+
+    } catch (error: any) {
+      console.error("Gemini Critical Error:", error);
+      
+      // 🕵️‍♂️ 進階偵錯：如果全部失敗，直接查詢這個 Key 到底能用什麼模型
+      if (error.message?.includes("404") || error.message?.includes("not found")) {
+        console.log("正在嘗試列出所有可用模型以協助除錯...");
+        try {
+          const listResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${geminiApiKey}`);
+          const listData = await listResponse.json();
+          console.log("📜 您的 API Key 可用的模型清單:", listData);
+        } catch (fetchErr) {
+          console.error("無法獲取模型清單", fetchErr);
+        }
+      }
+
+      setInsight("抱歉，AI 連線失敗。請打開瀏覽器 Console (F12) 查看可用模型清單，或確認 API Key 權限。");
     } finally {
       setLoading(false);
     }
@@ -178,7 +217,7 @@ export default function Stats() {
             {loading && (
                <Button disabled className="w-full h-12 rounded-xl bg-primary/50 text-white">
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                AI 正在思考...
+                AI 正在思考 (嘗試連線中)...
               </Button>
             )}
 

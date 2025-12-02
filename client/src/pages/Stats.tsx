@@ -74,7 +74,9 @@ export default function Stats() {
       if (!geminiApiKey) return;
 
       const genAI = new GoogleGenerativeAI(geminiApiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      
+      // 👇 修改重點：將 "gemini-pro" 改為 "gemini-1.5-flash"
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const recentEntries = getLast7DaysData().map(e => ({
         date: e.dateString,

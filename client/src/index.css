@@ -1,42 +1,50 @@
 @import "tailwindcss";
 
-/* Tailwind v4 Theme Configuration
-  Mapping CSS variables to Tailwind utilities
+/* Tailwind v4 設定區
+  這裡告訴 Tailwind：請把這些 CSS 變數變成 utility class (例如 bg-primary)
 */
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
   
   --radius: 1rem;
   
-  /* Font Families */
+  /* 字體設定 */
   --font-sans: 'Nunito', 'Noto Sans TC', sans-serif;
   --font-display: 'Noto Serif TC', serif;
 }
 
-/* Root Variables: Paper & Ink Palette (Warm Minimalist)
-  Using comma-separated HSL for maximum browser compatibility
+/* CSS 變數定義：溫暖極簡配色 (Paper & Ink Palette)
+  使用 HSL 逗號分隔寫法，相容性最高
 */
 :root {
-  --background: hsl(40, 20%, 97%); /* Cream */
-  --foreground: hsl(20, 10%, 20%); /* Ink */
+  --background: hsl(40, 20%, 97%); /* 米白色 Cream */
+  --foreground: hsl(20, 10%, 20%); /* 深暖灰 Ink */
   
   --card: hsl(0, 0%, 100%);
   --card-foreground: hsl(20, 10%, 20%);
@@ -44,7 +52,7 @@
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(20, 10%, 20%);
   
-  --primary: hsl(24, 10%, 40%); /* Warm Grey */
+  --primary: hsl(24, 10%, 40%); /* 溫暖的深棕灰色 */
   --primary-foreground: hsl(40, 20%, 97%);
   
   --secondary: hsl(40, 20%, 92%); /* 淺米色 */
@@ -66,18 +74,17 @@
   --radius: 1rem;
 }
 
-/* Base Styles
-*/
+/* 基礎樣式重置 */
 @layer base {
   * {
+    /* 關鍵修正：直接使用 CSS 變數設定邊框，避開 unknown utility class 錯誤 */
     border-color: var(--border);
     border-style: solid;
   }
 
   html {
-    /* Apply background color to html to allow body pseudo-elements to sit between html and body content */
     background-color: var(--background);
-    /* Noise Texture on HTML level */
+    /* 紙張雜訊紋理 */
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
     min-height: 100%;
   }
@@ -86,21 +93,18 @@
     color: var(--foreground);
     font-family: var(--font-sans);
     min-height: 100vh;
-    
-    /* 關鍵修正：加入 z-index: 0 確保偽元素不會跑到 html 背景後面 */
     position: relative;
     z-index: 0;
-    
     overflow-x: hidden;
-    background: transparent; /* Ensure body is transparent so we see html background */
+    background-color: transparent;
     
-    /* Dot Pattern Overlay */
+    /* 點陣圖案 Dot Pattern */
     background-image: radial-gradient(hsl(30, 10%, 80%, 0.4) 1px, transparent 1px);
     background-size: 24px 24px;
     background-attachment: fixed;
   }
 
-  /* Headings */
+  /* 標題樣式 */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 700;
@@ -108,7 +112,7 @@
     color: var(--primary);
   }
 
-  /* Ambient Light Animations */
+  /* 氛圍光暈動畫 */
   @keyframes float-bg {
     0% { transform: translate(0, 0) scale(1); }
     33% { transform: translate(30px, -50px) scale(1.1); }
@@ -116,38 +120,39 @@
     100% { transform: translate(0, 0) scale(1); }
   }
 
-  /* Ambient Orbs */
-  body::before,
-  body::after {
+  /* 氛圍光暈偽元素 */
+  body::before {
     content: "";
     position: fixed;
-    z-index: -1; /* Behind body content, in front of html background */
+    top: -10%;
+    left: -10%;
     width: 60vw;
     height: 60vw;
+    z-index: -1;
     border-radius: 50%;
+    background: radial-gradient(circle, hsl(30, 70%, 92%, 0.7) 0%, transparent 70%);
     filter: blur(80px);
-    opacity: 0.6;
+    animation: float-bg 20s ease-in-out infinite;
     pointer-events: none;
   }
 
-  /* Top-left Warm Orb */
-  body::before {
-    top: -10%;
-    left: -10%;
-    background: radial-gradient(circle, hsl(30, 70%, 92%) 0%, transparent 70%);
-    animation: float-bg 20s ease-in-out infinite;
-  }
-
-  /* Bottom-right Cool Orb */
   body::after {
+    content: "";
+    position: fixed;
     bottom: -10%;
     right: -10%;
-    background: radial-gradient(circle, hsl(260, 30%, 94%) 0%, transparent 70%);
+    width: 60vw;
+    height: 60vw;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, hsl(260, 30%, 94%, 0.7) 0%, transparent 70%);
+    filter: blur(80px);
     animation: float-bg 25s ease-in-out infinite reverse;
+    pointer-events: none;
   }
 }
 
-/* Utilities */
+/* 元件樣式 Utilities */
 @layer utilities {
   .glass-panel {
     background-color: rgba(255, 255, 255, 0.9);
@@ -181,7 +186,7 @@
     outline: none;
   }
   
-  /* Scrollbar */
+  /* 滾動條樣式 */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;

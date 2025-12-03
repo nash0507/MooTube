@@ -1,107 +1,115 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Nunito:wght@400;600;700&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    /* --- 核心配色：溫暖極簡 (Paper & Ink) --- */
-    
-    /* 背景：從冷紫漸層 -> 米白色 (Cream) */
-    --background: 40 20% 97%;
-    --foreground: 20 10% 20%; /* 深暖灰 (Ink) */
-    
-    /* 卡片：從透明玻璃 -> 實心紙張白 */
-    --card: 0 0% 100%;
-    --card-foreground: 20 10% 20%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 20%;
-    
-    /* 主色：從紫色 -> 溫暖的深棕灰 (Warm Grey) */
-    --primary: 24 10% 40%;
-    --primary-foreground: 40 20% 97%;
-    
-    /* 次要色：淺米色 */
-    --secondary: 40 20% 92%;
-    --secondary-foreground: 24 10% 40%;
-    
-    --muted: 40 20% 92%;
-    --muted-foreground: 25 5% 45%;
-    
-    /* 強調色：從亮粉 -> 淡淡的杏色 (Apricot) */
-    --accent: 30 30% 90%;
-    --accent-foreground: 24 10% 40%;
-    
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 30 10% 85%;
-    --input: 30 10% 85%;
-    --ring: 24 10% 40%;
-    
-    --radius: 1rem;
-    
-    /* 字體設定：保留你的變數名稱 */
-    --font-sans: 'Nunito', 'Noto Sans TC', sans-serif;
-    --font-display: 'Noto Serif TC', serif; /* 標題改用襯線體 */
-  }
+/* Tailwind v4 的設定區塊 
+  這裡定義所有的變數與字體
+*/
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --radius: 1rem;
+  
+  /* 字體設定 */
+  --font-sans: 'Nunito', 'Noto Sans TC', sans-serif;
+  --font-display: 'Noto Serif TC', serif;
 }
 
+/* CSS 變數定義：溫暖極簡配色 (Paper & Ink) */
+:root {
+  --background: hsl(40 20% 97%); /* 米白色 Cream */
+  --foreground: hsl(20 10% 20%); /* 深暖灰 Ink */
+  
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(20 10% 20%);
+  
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(20 10% 20%);
+  
+  --primary: hsl(24 10% 40%); /* 溫暖的深棕灰色 */
+  --primary-foreground: hsl(40 20% 97%);
+  
+  --secondary: hsl(40 20% 92%); /* 淺米色 */
+  --secondary-foreground: hsl(24 10% 40%);
+  
+  --muted: hsl(40 20% 92%);
+  --muted-foreground: hsl(25 5% 45%);
+  
+  --accent: hsl(30 30% 90%); /* 淡淡的杏色 */
+  --accent-foreground: hsl(24 10% 40%);
+  
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  --border: hsl(30 10% 85%);
+  --input: hsl(30 10% 85%);
+  --ring: hsl(24 10% 40%);
+  
+  --radius: 1rem;
+}
+
+/* 基礎樣式重置 */
 @layer base {
   * {
-    @apply border-border;
+    /* 修正錯誤的關鍵：直接使用 CSS 變數，而不是 @apply */
+    border-color: var(--border);
+    border-style: solid;
   }
-  
+
   body {
-    /* 背景改為溫暖的米色，並加入紙張紋理 (Noise Texture) */
-    @apply bg-background text-foreground font-sans antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    /* 加入高級紙張紋理 */
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
     background-blend-mode: overlay;
   }
   
-  /* 標題套用襯線體，增加人文氣息 */
+  /* 標題套用襯線體 */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     @apply font-bold tracking-tight text-primary;
   }
 }
 
+/* 自定義元件樣式 */
 @layer utilities {
-  /* 重構 .glass-panel 
-     保留 class 名稱以免改壞 React，但樣式改成「紙張質感」
-     (白色底 + 邊框 + 柔和陰影，不再是全透明毛玻璃)
-  */
   .glass-panel {
-    @apply bg-white/90 backdrop-blur-sm border border-stone-200 shadow-[2px_4px_16px_-4px_rgba(0,0,0,0.05)] transition-all duration-300;
+    @apply bg-white/90 backdrop-blur-sm shadow-md transition-all duration-300;
+    /* 手動指定邊框顏色以防萬一 */
+    border: 1px solid var(--border);
   }
   
   .glass-panel:hover {
-    @apply shadow-[2px_8px_20px_-4px_rgba(0,0,0,0.08)] -translate-y-0.5;
+    @apply shadow-lg -translate-y-0.5;
   }
-  
-  /* 重構 .glass-card */
+
   .glass-card {
-    @apply bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all duration-300;
+    @apply bg-white shadow-sm hover:shadow-md transition-all duration-300;
+    border: 1px solid var(--muted);
   }
 
   .glass-input {
-    @apply bg-white/50 border-stone-200 focus:bg-white focus:border-stone-400 transition-colors;
+    @apply bg-white/50 focus:bg-white transition-colors;
+    border: 1px solid var(--border);
   }
-  
-  /* Custom Scrollbar (保留你原本的設定，微調顏色) */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-stone-300 rounded-full;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-stone-400;
+  .glass-input:focus {
+    border-color: var(--ring);
   }
 }

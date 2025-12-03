@@ -1,67 +1,96 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Nunito:wght@400;600;700&display=swap');
 
-@theme inline {
-  --color-background: hsl(250 50% 98%);
-  --color-foreground: hsl(260 20% 20%);
-  
-  --color-primary: hsl(265 80% 60%);
-  --color-primary-foreground: hsl(0 0% 100%);
-  
-  --color-card: hsl(0 0% 100% / 0.7);
-  --color-card-foreground: hsl(260 20% 20%);
-  
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(260 20% 20%);
-  
-  --color-secondary: hsl(260 20% 96%);
-  --color-secondary-foreground: hsl(260 20% 20%);
-  
-  --color-muted: hsl(260 10% 94%);
-  --color-muted-foreground: hsl(260 10% 50%);
-  
-  --color-accent: hsl(265 80% 96%);
-  --color-accent-foreground: hsl(265 80% 50%);
-  
-  --color-destructive: hsl(0 84% 60%);
-  --color-destructive-foreground: hsl(0 0% 98%);
-  
-  --color-border: hsl(260 20% 90%);
-  --color-input: hsl(260 20% 90%);
-  --color-ring: hsl(265 80% 60%);
-  
-  --radius: 1rem;
-  
-  --font-sans: 'Noto Sans TC', 'Quicksand', sans-serif;
-  --font-display: 'Quicksand', 'Noto Sans TC', sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* --- 核心配色：溫暖極簡 (Paper & Ink) --- */
+    
+    /* 背景：從冷紫漸層 -> 米白色 (Cream) */
+    --background: 40 20% 97%;
+    --foreground: 20 10% 20%; /* 深暖灰 (Ink) */
+    
+    /* 卡片：從透明玻璃 -> 實心紙張白 */
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 20%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 10% 20%;
+    
+    /* 主色：從紫色 -> 溫暖的深棕灰 (Warm Grey) */
+    --primary: 24 10% 40%;
+    --primary-foreground: 40 20% 97%;
+    
+    /* 次要色：淺米色 */
+    --secondary: 40 20% 92%;
+    --secondary-foreground: 24 10% 40%;
+    
+    --muted: 40 20% 92%;
+    --muted-foreground: 25 5% 45%;
+    
+    /* 強調色：從亮粉 -> 淡淡的杏色 (Apricot) */
+    --accent: 30 30% 90%;
+    --accent-foreground: 24 10% 40%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 10% 85%;
+    --input: 30 10% 85%;
+    --ring: 24 10% 40%;
+    
+    --radius: 1rem;
+    
+    /* 字體設定：保留你的變數名稱 */
+    --font-sans: 'Nunito', 'Noto Sans TC', sans-serif;
+    --font-display: 'Noto Serif TC', serif; /* 標題改用襯線體 */
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  
   body {
-    @apply font-sans antialiased bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 min-h-screen text-foreground selection:bg-primary/20;
+    /* 背景改為溫暖的米色，並加入紙張紋理 (Noise Texture) */
+    @apply bg-background text-foreground font-sans antialiased;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
   }
+  
+  /* 標題套用襯線體，增加人文氣息 */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold;
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight text-primary;
   }
 }
 
 @layer utilities {
+  /* 重構 .glass-panel 
+     保留 class 名稱以免改壞 React，但樣式改成「紙張質感」
+     (白色底 + 邊框 + 柔和陰影，不再是全透明毛玻璃)
+  */
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-xl;
+    @apply bg-white/90 backdrop-blur-sm border border-stone-200 shadow-[2px_4px_16px_-4px_rgba(0,0,0,0.05)] transition-all duration-300;
   }
   
+  .glass-panel:hover {
+    @apply shadow-[2px_8px_20px_-4px_rgba(0,0,0,0.08)] -translate-y-0.5;
+  }
+  
+  /* 重構 .glass-card */
   .glass-card {
-    @apply bg-white/60 backdrop-blur-sm border border-white/30 shadow-sm hover:shadow-md transition-all duration-300;
+    @apply bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all duration-300;
   }
 
   .glass-input {
-    @apply bg-white/50 border-white/50 focus:bg-white/80 transition-colors;
+    @apply bg-white/50 border-stone-200 focus:bg-white focus:border-stone-400 transition-colors;
   }
   
-  /* Custom Scrollbar */
+  /* Custom Scrollbar (保留你原本的設定，微調顏色) */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -70,9 +99,9 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    @apply bg-stone-300 rounded-full;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    @apply bg-stone-400;
   }
 }

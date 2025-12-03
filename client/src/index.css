@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-/* Tailwind v4 的設定區塊 
-  這裡定義所有的變數與字體
+/* Tailwind v4 Theme Configuration
+  Mapping CSS variables to Tailwind utilities
 */
 @theme {
   --color-background: var(--background);
@@ -26,74 +26,85 @@
   
   --radius: 1rem;
   
-  /* 字體設定 */
+  /* Font Families */
   --font-sans: 'Nunito', 'Noto Sans TC', sans-serif;
   --font-display: 'Noto Serif TC', serif;
 }
 
-/* CSS 變數定義：溫暖極簡配色 (Paper & Ink) */
+/* Root Variables: Paper & Ink Palette (Warm Minimalist)
+  Using comma-separated HSL for maximum browser compatibility
+*/
 :root {
-  --background: hsl(40 20% 97%); /* 米白色 Cream */
-  --foreground: hsl(20 10% 20%); /* 深暖灰 Ink */
+  --background: hsl(40, 20%, 97%); /* Cream */
+  --foreground: hsl(20, 10%, 20%); /* Ink */
   
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(20 10% 20%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 10%, 20%);
   
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(20 10% 20%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 10%, 20%);
   
-  --primary: hsl(24 10% 40%); /* 溫暖的深棕灰色 */
-  --primary-foreground: hsl(40 20% 97%);
+  --primary: hsl(24, 10%, 40%); /* Warm Grey */
+  --primary-foreground: hsl(40, 20%, 97%);
   
-  --secondary: hsl(40 20% 92%); /* 淺米色 */
-  --secondary-foreground: hsl(24 10% 40%);
+  --secondary: hsl(40, 20%, 92%); /* 淺米色 */
+  --secondary-foreground: hsl(24, 10%, 40%);
   
-  --muted: hsl(40 20% 92%);
-  --muted-foreground: hsl(25 5% 45%);
+  --muted: hsl(40, 20%, 92%);
+  --muted-foreground: hsl(25, 5%, 45%);
   
-  --accent: hsl(30 30% 90%); /* 淡淡的杏色 */
-  --accent-foreground: hsl(24 10% 40%);
+  --accent: hsl(30, 30%, 90%); /* 淡淡的杏色 */
+  --accent-foreground: hsl(24, 10%, 40%);
   
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(210 40% 98%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(210, 40%, 98%);
 
-  --border: hsl(30 10% 85%);
-  --input: hsl(30 10% 85%);
-  --ring: hsl(24 10% 40%);
+  --border: hsl(30, 10%, 85%);
+  --input: hsl(30, 10%, 85%);
+  --ring: hsl(24, 10%, 40%);
   
   --radius: 1rem;
 }
 
-/* 基礎樣式重置 */
+/* Base Styles
+*/
 @layer base {
   * {
-    /* 修正錯誤的關鍵：直接使用 CSS 變數，而不是 @apply */
     border-color: var(--border);
     border-style: solid;
   }
 
-  body {
+  html {
+    /* Apply background color to html to allow body pseudo-elements to sit between html and body content */
     background-color: var(--background);
+    /* Noise Texture on HTML level */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    min-height: 100%;
+  }
+
+  body {
     color: var(--foreground);
     font-family: var(--font-sans);
-    
-    /* 質感升級：
-       1. Dot Pattern (點陣筆記本): 增加細節，打破單調
-       2. Noise Texture (紙張紋理): 保留原本的紙質感
-    */
-    background-image: 
-      radial-gradient(hsl(30 10% 80% / 0.4) 1px, transparent 1px), 
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-    
-    background-size: 24px 24px, auto; /* 設定點點的間距 */
-    background-attachment: fixed; /* 讓背景固定，產生視差效果 */
-    background-blend-mode: normal, overlay;
-    
+    min-height: 100vh;
     position: relative;
-    overflow-x: hidden; /* 防止光暈跑出畫面造成橫向捲軸 */
+    overflow-x: hidden;
+    background: transparent; /* Ensure body is transparent so we see html background */
+    
+    /* Dot Pattern Overlay */
+    background-image: radial-gradient(hsl(30, 10%, 80%, 0.4) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-attachment: fixed;
   }
-  
-  /* 定義氛圍光暈的漂浮動畫 */
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--primary);
+  }
+
+  /* Ambient Light Animations */
   @keyframes float-bg {
     0% { transform: translate(0, 0) scale(1); }
     33% { transform: translate(30px, -50px) scale(1.1); }
@@ -101,65 +112,84 @@
     100% { transform: translate(0, 0) scale(1); }
   }
 
-  /* 左上角暖色光暈 */
-  body::before {
-    content: "";
-    position: fixed;
-    top: -10%;
-    left: -10%;
-    width: 60vw;
-    height: 60vw;
-    background: radial-gradient(circle, hsl(30 70% 92% / 0.7) 0%, transparent 70%);
-    filter: blur(80px);
-    z-index: -1;
-    animation: float-bg 20s ease-in-out infinite;
-    pointer-events: none;
-  }
-
-  /* 右下角冷色光暈 */
+  /* Ambient Orbs */
+  body::before,
   body::after {
     content: "";
     position: fixed;
-    bottom: -10%;
-    right: -10%;
+    z-index: -1; /* Behind body content, in front of html background */
     width: 60vw;
     height: 60vw;
-    background: radial-gradient(circle, hsl(260 30% 94% / 0.7) 0%, transparent 70%);
+    border-radius: 50%;
     filter: blur(80px);
-    z-index: -1;
-    animation: float-bg 25s ease-in-out infinite reverse;
+    opacity: 0.6;
     pointer-events: none;
   }
-  
-  /* 標題套用襯線體 */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    @apply font-bold tracking-tight text-primary;
+
+  /* Top-left Warm Orb */
+  body::before {
+    top: -10%;
+    left: -10%;
+    background: radial-gradient(circle, hsl(30, 70%, 92%) 0%, transparent 70%);
+    animation: float-bg 20s ease-in-out infinite;
+  }
+
+  /* Bottom-right Cool Orb */
+  body::after {
+    bottom: -10%;
+    right: -10%;
+    background: radial-gradient(circle, hsl(260, 30%, 94%) 0%, transparent 70%);
+    animation: float-bg 25s ease-in-out infinite reverse;
   }
 }
 
-/* 自定義元件樣式 */
+/* Utilities */
 @layer utilities {
   .glass-panel {
-    @apply bg-white/95 backdrop-blur-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300;
-    /* 手動指定邊框顏色以防萬一 */
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
     border: 1px solid var(--border);
+    transition: all 0.3s ease;
   }
   
   .glass-panel:hover {
-    @apply shadow-[0_8px_30px_rgb(0,0,0,0.08)] -translate-y-0.5;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
   }
 
   .glass-card {
-    @apply bg-white shadow-sm hover:shadow-md transition-all duration-300;
+    background-color: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     border: 1px solid var(--muted);
+    transition: all 0.3s ease;
   }
 
   .glass-input {
-    @apply bg-white/50 focus:bg-white transition-colors;
+    background-color: rgba(255, 255, 255, 0.5);
     border: 1px solid var(--border);
+    transition: background-color 0.2s, border-color 0.2s;
   }
+  
   .glass-input:focus {
+    background-color: white;
     border-color: var(--ring);
+    outline: none;
+  }
+  
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #d6d3d1; /* stone-300 */
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #a8a29e; /* stone-400 */
   }
 }

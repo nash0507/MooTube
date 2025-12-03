@@ -41,10 +41,11 @@
 
 /* CSS 變數定義：溫暖極簡配色 (Paper & Ink Palette)
   使用 HSL 逗號分隔寫法，相容性最高
+  [Cache Bust Update]: 微調顏色數值以強制更新快取
 */
 :root {
-  --background: hsl(40, 20%, 97%); /* 米白色 Cream */
-  --foreground: hsl(20, 10%, 20%); /* 深暖灰 Ink */
+  --background: hsl(40, 20%, 96%); /* Cream (微調) */
+  --foreground: hsl(20, 10%, 20%); /* Ink */
   
   --card: hsl(0, 0%, 100%);
   --card-foreground: hsl(20, 10%, 20%);
@@ -52,7 +53,7 @@
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(20, 10%, 20%);
   
-  --primary: hsl(24, 10%, 40%); /* 溫暖的深棕灰色 */
+  --primary: hsl(24, 10%, 40%); /* Warm Grey */
   --primary-foreground: hsl(40, 20%, 97%);
   
   --secondary: hsl(40, 20%, 92%); /* 淺米色 */
@@ -77,7 +78,7 @@
 /* 基礎樣式重置 */
 @layer base {
   * {
-    /* 關鍵修正：直接使用 CSS 變數設定邊框，避開 unknown utility class 錯誤 */
+    /* 關鍵修正：直接使用 CSS 變數設定邊框 */
     border-color: var(--border);
     border-style: solid;
   }

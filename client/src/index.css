@@ -76,9 +76,18 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    /* 加入高級紙張紋理 */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-    background-blend-mode: overlay;
+    
+    /* 質感升級：
+       1. Dot Pattern (點陣筆記本): 增加細節，打破單調
+       2. Noise Texture (紙張紋理): 保留原本的紙質感
+    */
+    background-image: 
+      radial-gradient(hsl(30 10% 80% / 0.4) 1px, transparent 1px), 
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    
+    background-size: 24px 24px, auto; /* 設定點點的間距 */
+    background-attachment: fixed; /* 讓背景固定，產生視差效果 */
+    background-blend-mode: normal, overlay;
   }
   
   /* 標題套用襯線體 */
@@ -91,13 +100,13 @@
 /* 自定義元件樣式 */
 @layer utilities {
   .glass-panel {
-    @apply bg-white/90 backdrop-blur-sm shadow-md transition-all duration-300;
+    @apply bg-white/95 backdrop-blur-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300;
     /* 手動指定邊框顏色以防萬一 */
     border: 1px solid var(--border);
   }
   
   .glass-panel:hover {
-    @apply shadow-lg -translate-y-0.5;
+    @apply shadow-[0_8px_30px_rgb(0,0,0,0.08)] -translate-y-0.5;
   }
 
   .glass-card {

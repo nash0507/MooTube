@@ -88,6 +88,47 @@
     background-size: 24px 24px, auto; /* 設定點點的間距 */
     background-attachment: fixed; /* 讓背景固定，產生視差效果 */
     background-blend-mode: normal, overlay;
+    
+    position: relative;
+    overflow-x: hidden; /* 防止光暈跑出畫面造成橫向捲軸 */
+  }
+  
+  /* 定義氛圍光暈的漂浮動畫 */
+  @keyframes float-bg {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  /* 左上角暖色光暈 */
+  body::before {
+    content: "";
+    position: fixed;
+    top: -10%;
+    left: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, hsl(30 70% 92% / 0.7) 0%, transparent 70%);
+    filter: blur(80px);
+    z-index: -1;
+    animation: float-bg 20s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* 右下角冷色光暈 */
+  body::after {
+    content: "";
+    position: fixed;
+    bottom: -10%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, hsl(260 30% 94% / 0.7) 0%, transparent 70%);
+    filter: blur(80px);
+    z-index: -1;
+    animation: float-bg 25s ease-in-out infinite reverse;
+    pointer-events: none;
   }
   
   /* 標題套用襯線體 */
